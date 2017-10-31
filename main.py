@@ -2,32 +2,66 @@
 from network import Bluetooth
 from network import WLAN
 from mqtt import MQTTClient
-from colorSensor import ColorSensor
-from platform import PlatformController
+#from colorSensor import ColorSensor
+#from platform import PlatformController
 import pycom
 import time
 import utime
 import machine
+from machine import Pin
+from machine import PWM
+from ds18x20 import DS18X20
+print('started!')
+pycom.heartbeat(False)
+pycom.rgbled(0x7f7f00) # yellow
 
+pwm = PWM(0, frequency=50)
+pwm_c = pwm.channel(0, pin='P22', duty_cycle=0.127)
+pwm_c.duty_cycle(0.097)
+# red temp
+#d=DS18X20(Pin('P21', mode=Pin.OUT)) # G8
+#result=d.read_temps()
+#print(result)
+#time.sleep(1)
+
+
+
+
+
+
+
+#ow = OneWire(Pin('P13'))
+#temp = DS18X20(ow)
+#for num in range(0, 10):
+#    print(temp.read_temp_async())
+#    time.sleep(1)
+#    temp.start_convertion()
+#    time.sleep(1)
+
+#pycom.rgbled(0x7f0000) # red
+#pwm = machine.PWM(0, frequency=50)
+#pwm_c = pwm.channel(0, pin='P12', duty_cycle=0.04)
+#time.sleep(4)
+#pwm_c.duty_cycle(0.112)
+#time.sleep(4)
+#pwm_c.duty_cycle(1)
+#time.sleep(4)
+#pwm_c.duty_cycle(0)
+
+#p = Pin('P7', mode=Pin.OUT)
+#for num in range(0, 141):
+#    servoPulse(angle=angle)
+#    angle = angle + 5
+#for num in range(0, 141):
+#    servoPulse(angle=angle)
+#    angle = angle - 5
 
 #print('rtc.now:'+str(rtc.now())+" utime.time:"+str(int(utime.time())))
-pycom.heartbeat(False)
+
 
 def sub_cb(topic, msg):
     print(msg)
 
-wlan = WLAN(mode=WLAN.STA)
-nets = wlan.scan()
-
-for net in nets:
-     if net.ssid == 'NETGEAR64':
-        print('Network found!')
-        wlan.connect(net.ssid, auth=(net.sec, 'oddchair195'), timeout=5000)
-        while not wlan.isconnected():
-            pycom.rgbled(0x7f0000)
-            machine.idle() # save power while waiting
-        print('WLAN connection succeeded!')
-        break
 
 # initialize time
 rtc = machine.RTC()
@@ -60,7 +94,7 @@ pycom.rgbled(0x000000) # turn off led
 # pump control
 
 # platform control
-pCont = PlatformController()
+# pCont = PlatformController()
 
 
 # put in while true loop:
