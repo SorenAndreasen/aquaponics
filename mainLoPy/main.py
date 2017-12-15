@@ -39,21 +39,17 @@ utime.sleep_ms(750)
 utime.timezone(3600) # adjust to danish time
 print('adjusted:', utime.localtime())
 
-#pycom.rgbled(0x007f00)
 
 time.sleep(1)
 client = MQTTClient("lopyMain", "io.adafruit.com", user="soerena", password="af35ecd7c14246b9adc0492a3ecc661f", port=1883)
 time.sleep(1)
 client.set_callback(sub_cb)
 print('connected to adafruit!')
-#pycom.rgbled(0x007f00) # set green light to show all OK
-# colour analysis
-m = MOTORS()
-#tc = TCS3200()
 
+m = MOTORS()
 
 def pcTakePicture():
-    s.sendto(b'1', ("10.0.0.6", 7007))
+    s.sendto(b'1', ("10.0.0.6", 7007)) # tell Macbook to take picture
 
 def readAndPublishTemp():
     client.connect()
@@ -61,10 +57,9 @@ def readAndPublishTemp():
     print("reading and publishing")
     client.publish(topic="soerena/feeds/waterTemp", msg=str(waterTemp))
     client.disconnect()
-    #pycom.rgbled(0x007f00) # green
-def sendToColorLoPy():
-    s2.sendto(b'1', ("10.0.0.89", 7000))
 
+def sendToColorLoPy():
+    s2.sendto(b'1', ("10.0.0.89", 7000)) # tell colour lopy to measure colour
 
 
 def readAndPublishPH():
@@ -90,6 +85,9 @@ while True:
         lastHour = utime.localtime()[3]
         readAndPublishTemp()
         if utime.localtime()[3] == 9:
+            readAndPublishPH()
+            waterPlants()
+        elif utime.localtime()[3] == 13:
             readAndPublishPH()
             waterPlants()
         elif utime.localtime()[3] == 20:
